@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from os import getenv
 from pathlib import Path
 import shutil
+import time
 
 ## Load .env variables
 load_dotenv()
@@ -24,10 +25,11 @@ def upload_replay(filepath):
         r = requests.post(
             "https://ballchasing.com/api/v2/upload", headers=HEADERS, files={"file": f}
         )
+    time.sleep(2)
     return r.json()["id"]
 
 
-def upload_replay_folder(folderpath, outpath):
+def upload_replay_folder(folderpath, outpath, logfile):
     """
     Upload a folder of replays
 
@@ -36,11 +38,12 @@ def upload_replay_folder(folderpath, outpath):
     """
     assert folderpath.is_dir(), "folderpath is not a folder"
     assert outpath.is_dir(), "outpath is not a folder"
+    assert logfile.is_file(), "logfile is not a file"
 
     replay_files = list(Path(folderpath).glob("*.replay"))
     assert len(replay_files) > 0, "No .replay files to process"
 
-    print(f"About to upload {len(replay_files)} to Ballechasing.com")
+    print(f"About to upload {len(replay_files)} to Ballchasing.com")
     uploaded_files = [upload_replay(file) for file in replay_files]
     assert len(replay_files) == len(
         uploaded_files
@@ -48,14 +51,16 @@ def upload_replay_folder(folderpath, outpath):
     print(f"Upload complete.")
 
     [shutil.move(str(f), outpath / f.name) for f in replay_files]
+    with open(logfile, "a") as f:
+        f.write("\n".join(uploaded_files) + "\n")
     return uploaded_files
-
 
 # Get stats
 def get_replay_stats(replay_id):
     r = requests.get(
         f"https://ballchasing.com/api/replays/{replay_id}", headers=HEADERS
     )
+    time.sleep(1)
     return r.json()
 
 
@@ -69,6 +74,7 @@ def to_pandas(stats):
                 "player": player["name"],
                 "id": player["id"]["id"],
                 "timestamp": stats["date"],
+                "gamelength": player["end_time"]
             }
             # flatten all stat categories
             for category, values in player["stats"].items():

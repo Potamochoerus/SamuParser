@@ -3,14 +3,14 @@ from src.utils import (
     upload_replay_folder,
     merge_processed_replays,
 )
-from src.shared import RAW, PROCESSED, PARSED, MERGED
+from src.shared import RAW, PROCESSED, PARSED, MERGED, LOGFILE
 import argparse
 
 
 def main(args):
     assert args.convert or args.merge, "Please select convert or merge"
     if args.convert:
-        uploaded_ids = upload_replay_folder(RAW, PROCESSED)
+        uploaded_ids = upload_replay_folder(RAW, PROCESSED, LOGFILE)
         process_batch_replay_stats(uploaded_ids, PARSED)
         print(f"All submitted replays are converted.")
 
