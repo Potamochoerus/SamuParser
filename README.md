@@ -1,5 +1,5 @@
-# SamuTracker
-A shiny python interface to track samu-igual-samu
+# SamuParser
+A python script using ballchasing API to parse rocket league replay files and feed SamuTracker.
 
 ## Save RL game replays
 Saved RL games replays can be found in `~/Documents/My Games/Rocket League/TAGame/DemosEpic/`. Copy them to the `raw` folder of this project.
