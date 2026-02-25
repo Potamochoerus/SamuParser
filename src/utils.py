@@ -55,6 +55,7 @@ def upload_replay_folder(folderpath, outpath, logfile):
         f.write("\n".join(uploaded_files) + "\n")
     return uploaded_files
 
+
 # Get stats
 def get_replay_stats(replay_id):
     r = requests.get(
@@ -74,7 +75,7 @@ def to_pandas(stats):
                 "player": player["name"],
                 "id": player["id"]["id"],
                 "timestamp": stats["date"],
-                "gamelength": player["end_time"]
+                "gamelength": player["end_time"],
             }
             # flatten all stat categories
             for category, values in player["stats"].items():
